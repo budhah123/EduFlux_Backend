@@ -1,6 +1,6 @@
-name: NestJS CI/CD for Render
+name: NestJS CI/CD
 
-# Trigger workflow on push or PR to dev, uat, prod
+# Trigger workflow on push or pull request to these branches
 on:
   push:
     branches:
@@ -14,13 +14,13 @@ on:
       - prod
 
 jobs:
-  build-test-deploy:
-    name: Build, Test, and Deploy NestJS
+  build-and-test:
+    name: Build and Test NestJS
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout repository
-      - name: Checkout code
+      # 1️⃣ Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       # 2️⃣ Setup Node.js
@@ -40,41 +40,3 @@ jobs:
       # 5️⃣ Build project
       - name: Build project
         run: npm run build
-
-      # 6️⃣ Trigger Render deployment via API
-      - name: Deploy to Render via API
-        env:
-          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
-          SERVICE_ID: ${{ secrets.SERVICE_ID }}
-        run: |
-          echo "Triggering Render deployment..."
-          
-          # Trigger a new deployment
-          DEPLOY_ID=$(curl -s -X POST "https://api.render.com/v1/services/$SERVICE_ID/deploys" \
-            -H "Authorization: Bearer $RENDER_API_KEY" \
-            -H "Content-Type: application/json" \
-            -d '{}' | jq -r '.id')
-
-          echo "Deploy ID: $DEPLOY_ID"
-
-          if [ -z "$DEPLOY_ID" ] || [ "$DEPLOY_ID" = "null" ]; then
-            echo "Failed to trigger deployment."
-            exit 1
-          fi
-
-          # Wait until deployment is LIVE
-          echo "Waiting for deployment to complete..."
-          while true; do
-            STATUS=$(curl -s -H "Authorization: Bearer $RENDER_API_KEY" \
-              "https://api.render.com/v1/deploys/$DEPLOY_ID" | jq -r '.status')
-            echo "Current status: $STATUS"
-
-            if [[ "$STATUS" == "LIVE" ]]; then
-              echo "Deployment finished successfully!"
-              break
-            elif [[ "$STATUS" == "FAILED" ]]; then
-              echo "Deployment failed!"
-              exit 1
-            fi
-            sleep 10
-          done
