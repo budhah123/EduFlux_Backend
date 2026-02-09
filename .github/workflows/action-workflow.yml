@@ -7,13 +7,11 @@ on:
       - dev
       - uat
       - prod
-      - master
   pull_request:
     branches:
       - dev
       - uat
       - prod
-      - master
 
 jobs:
   build-and-test:
