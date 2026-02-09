@@ -1,6 +1,6 @@
 name: NestJS CI/CD for Render
 
-# Trigger workflow on push or pull request merge to these branches
+# Trigger workflow on push or PR to dev, uat, prod
 on:
   push:
     branches:
@@ -14,32 +14,41 @@ on:
       - prod
 
 jobs:
-  build-and-test:
-    name: Build and Test NestJS
+  build-test-deploy:
+    name: Build, Test, and Deploy NestJS
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout code
-      - name: Checkout repository
+      # 1️⃣ Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Setup Node.js
+      # 2️⃣ Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
 
-      # Step 3: Install dependencies
+      # 3️⃣ Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # # Step 4: Run tests
+      # 4️⃣ Run tests (optional, uncomment if needed)
       # - name: Run tests
       #   run: npm run test
 
-      # Step 5: Build project
+      # 5️⃣ Build project
       - name: Build project
         run: npm run build
 
-      # ✅ Step 6: Deployment is automatic on Render
-      # Render auto-deploys on push to dev/uat/prod, so nothing else is needed
+      # 6️⃣ Install Render CLI
+      - name: Install Render CLI
+        run: npm install -g @render/cli
+
+      # 7️⃣ Deploy to Render and wait until live
+      - name: Deploy to Render
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+        run: |
+          echo "Deploying to Render..."
+          render deploy service --service-id ${{ secrets.SERVICE_ID }} --wait
