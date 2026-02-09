@@ -33,7 +33,7 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # 4️⃣ Run tests (optional, uncomment if needed)
+      # 4️⃣ Run tests (optional)
       # - name: Run tests
       #   run: npm run test
 
@@ -41,14 +41,40 @@ jobs:
       - name: Build project
         run: npm run build
 
-      # 6️⃣ Install Render CLI
-      - name: Install Render CLI
-        run: npm install -g @render/cli
-
-      # 7️⃣ Deploy to Render and wait until live
-      - name: Deploy to Render
+      # 6️⃣ Trigger Render deployment via API
+      - name: Deploy to Render via API
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          SERVICE_ID: ${{ secrets.SERVICE_ID }}
         run: |
-          echo "Deploying to Render..."
-          render deploy service --service-id ${{ secrets.SERVICE_ID }} --wait
+          echo "Triggering Render deployment..."
+          
+          # Trigger a new deployment
+          DEPLOY_ID=$(curl -s -X POST "https://api.render.com/v1/services/$SERVICE_ID/deploys" \
+            -H "Authorization: Bearer $RENDER_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{}' | jq -r '.id')
+
+          echo "Deploy ID: $DEPLOY_ID"
+
+          if [ -z "$DEPLOY_ID" ] || [ "$DEPLOY_ID" = "null" ]; then
+            echo "Failed to trigger deployment."
+            exit 1
+          fi
+
+          # Wait until deployment is LIVE
+          echo "Waiting for deployment to complete..."
+          while true; do
+            STATUS=$(curl -s -H "Authorization: Bearer $RENDER_API_KEY" \
+              "https://api.render.com/v1/deploys/$DEPLOY_ID" | jq -r '.status')
+            echo "Current status: $STATUS"
+
+            if [[ "$STATUS" == "LIVE" ]]; then
+              echo "Deployment finished successfully!"
+              break
+            elif [[ "$STATUS" == "FAILED" ]]; then
+              echo "Deployment failed!"
+              exit 1
+            fi
+            sleep 10
+          done
