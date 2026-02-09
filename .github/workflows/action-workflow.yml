@@ -1,37 +1,45 @@
-name: Nest JS CI/CD workflow for EduFlux
+name: NestJS CI/CD for Render
 
-#Trigger the workflow on push or pull request events to the main branch
+# Trigger workflow on push or pull request merge to these branches
 on:
   push:
     branches:
       - dev
-      -uat
-      -prod
+      - uat
+      - prod
   pull_request:
     branches:
       - dev
-      -uat
-      -prod
+      - uat
+      - prod
+
 jobs:
-  build:
+  build-and-test:
+    name: Build and Test NestJS
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      # Step 1: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
+      # Step 2: Setup Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
 
+      # Step 3: Install dependencies
       - name: Install dependencies
         run: npm install
 
+      # Step 4: Run tests
       - name: Run tests
-        run: npm test
+        run: npm run test
 
-      - name: Build the application
+      # Step 5: Build project
+      - name: Build project
         run: npm run build
 
-      # Add deployment steps here (e.g., deploy to AWS, Heroku, etc.)
-
+      # ✅ Step 6: Deployment is automatic on Render
+      # Render auto-deploys on push to dev/uat/prod, so nothing else is needed
