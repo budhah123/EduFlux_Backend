@@ -21,19 +21,21 @@
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
-    "@nestjs/config": "^4.0.2",
+    "@nestjs/config": "^4.0.3",
     "@nestjs/core": "^11.0.1",
     "@nestjs/jwt": "^11.0.2",
     "@nestjs/passport": "^11.0.5",
-    "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/platform-express": "^11.1.13",
     "@nestjs/swagger": "^11.2.5",
     "@nestjs/typeorm": "^11.0.0",
+    "@supabase/supabase-js": "^2.95.3",
     "bcrypt": "^6.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.3",
     "compression": "^1.8.1",
     "express-basic-auth": "^1.2.1",
     "mongodb": "^6.21.0",
+    "multer": "^2.0.2",
     "nanoid": "^5.1.6",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
@@ -52,6 +54,7 @@
     "@types/compression": "^1.8.1",
     "@types/express": "^5.0.6",
     "@types/jest": "^30.0.0",
+    "@types/multer": "^2.0.0",
     "@types/node": "^22.10.7",
     "@types/passport-google-oauth20": "^2.0.17",
     "@types/supertest": "^6.0.2",
@@ -91,6 +94,8 @@
       "<rootDir>/libs/"
     ],
     "moduleNameMapper": {
+      "^@app/file-upload(|/.*)$": "<rootDir>/libs/file-upload/src/$1",
+      "^@app/supabase(|/.*)$": "<rootDir>/libs/supabase/src/$1",
       "^@app/swagger(|/.*)$": "<rootDir>/libs/swagger/src/$1"
     }
   }

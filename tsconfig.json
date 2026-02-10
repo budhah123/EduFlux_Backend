@@ -28,6 +28,18 @@
       "@app/database/*": [
         "libs/database/src/*"
       ],
+      "@app/file-upload": [
+        "libs/file-upload/src"
+      ],
+      "@app/file-upload/*": [
+        "libs/file-upload/src/*"
+      ],
+      "@app/supabase": [
+        "libs/supabase/src"
+      ],
+      "@app/supabase/*": [
+        "libs/supabase/src/*"
+      ],
       "@app/swagger": [
         "libs/swagger/src"
       ],

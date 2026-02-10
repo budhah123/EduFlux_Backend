@@ -7,6 +7,24 @@
     "webpack": true
   },
   "projects": {
+    "file-upload": {
+      "type": "library",
+      "root": "libs/file-upload",
+      "entryFile": "index",
+      "sourceRoot": "libs/file-upload/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/file-upload/tsconfig.lib.json"
+      }
+    },
+    "supabase": {
+      "type": "library",
+      "root": "libs/supabase",
+      "entryFile": "index",
+      "sourceRoot": "libs/supabase/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/supabase/tsconfig.lib.json"
+      }
+    },
     "swagger": {
       "type": "library",
       "root": "libs/swagger",
