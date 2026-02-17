@@ -9,5 +9,6 @@ import { FileUploadModule } from '@app/file-upload';
   imports: [TypeOrmModule.forFeature([FileEntity]), FileUploadModule],
   providers: [FilesService],
   controllers: [FilesController],
+  exports: [FilesService],
 })
 export class FilesModule {}
