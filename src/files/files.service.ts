@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { SupabaseClient } from '@supabase/supabase-js';
-import { MongoRepository } from 'typeorm';
+import { FindOptionsOrder, FindOptionsWhere, MongoRepository } from 'typeorm';
 import { FileEntity } from './entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUploadService } from '@app/file-upload';
+import { PaginationInput } from 'src/common/pagination';
 
 @Injectable()
 export class FilesService {
@@ -30,5 +31,24 @@ export class FilesService {
       fileUrl,
     });
     return this.fileRepository.save(fileEntity);
+  }
+
+  async getFiles(
+    whereParams: FindOptionsWhere<FileEntity | any>,
+    orderParams: FindOptionsOrder<FileEntity | any>,
+    paginationInput: PaginationInput,
+  ) {
+    return this.fileRepository.findAndCount({
+      where: whereParams || {},
+      order: orderParams || {
+        createdAt: 'DESC',
+      },
+      skip: ((paginationInput?.page || 1) - 1) * (paginationInput?.limit || 10),
+      take: paginationInput?.limit || 10,
+    });
+  }
+
+  async getFile(whereParams: FindOptionsWhere<FileEntity | any>) {
+    return await this.fileRepository.findOne({ where: whereParams });
   }
 }

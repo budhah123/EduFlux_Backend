@@ -1,14 +1,23 @@
 import {
   Body,
   Controller,
+  Get,
   Post,
+  Query,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { FilesService } from './files.service';
 import { CreateFileInput } from './dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiConsumes,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
+import { PaginationInput } from 'src/common/pagination';
 
 @ApiTags('Files Management')
 @Controller('files')
@@ -40,6 +49,27 @@ export class FilesController {
     return {
       message: 'File uploaded successfully',
       data: files,
+    };
+  }
+
+  @Get()
+  @ApiOperation({ summary: 'Get all reasons' })
+  @ApiOkResponse({
+    description: 'Reasons retrieved successfully',
+  })
+  async getFiles(@Query() paginationInput: PaginationInput) {
+    const [files, count] = await this.filesService.getFiles(
+      {},
+      {},
+      paginationInput,
+    );
+    return {
+      data: files,
+      meta: {
+        total: count,
+        page: paginationInput?.page || 1,
+        limit: paginationInput?.limit || 10,
+      },
     };
   }
 }
