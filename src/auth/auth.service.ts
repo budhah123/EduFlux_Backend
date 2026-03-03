@@ -11,11 +11,13 @@ import { ResetPasswordInput, TokenOutput } from './dto';
 import { JwtConfigService } from './config';
 import { UserEntity } from 'src/user/entity';
 import { AuthTokenType } from './enum';
+import { AuthType } from './enum/auth-type.enum';
 import { AuthTokenEntity } from './entity';
 import { MongoRepository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+// custom alphabet generator for OTPs
 import { customAlphabet } from 'nanoid';
-import { AuthType } from './enum/auth-type.enum';
+
 import { ObjectId } from 'mongodb';
 
 @Injectable()
@@ -84,10 +86,7 @@ export class AuthService {
     };
   }
 
-
-  async register() {
-    
-  }
+  async register() {}
   async validateGoogleUser(googleUser: any) {
     const user = await this.userService.getUser({ email: googleUser.email });
     if (user) {
@@ -187,7 +186,7 @@ export class AuthService {
     }
 
     await Promise.all([
-      this.authTokenRepository.delete(authToken.id),
+      this.authTokenRepository.delete(authToken._id),
       this.userService.updateUser(user.id.toString(), {
         password: password, // UserService.updateUser handles hashing
       }),
@@ -224,5 +223,23 @@ export class AuthService {
       );
     }
     return user;
+  }
+
+  async verifyOtp(email: string, token: string, authTokenType: AuthTokenType) {
+    const user = await this.userService.getUser({ email: email });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    const authToken = await this.authTokenRepository.findOne({
+      where: {
+        userId: user.id?.toString(),
+        type: authTokenType,
+        token: token,
+      },
+    });
+    if (!authToken) {
+      throw new BadRequestException('Invalid token');
+    }
+    return authToken;
   }
 }

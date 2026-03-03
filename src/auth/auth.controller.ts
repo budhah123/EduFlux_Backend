@@ -19,6 +19,7 @@ import {
   RegisterOutput,
   ResetPasswordInput,
   TokenOutput,
+  VerifyOtpInput,
 } from './dto';
 import { UserService } from 'src/user/user.service';
 import {
@@ -140,5 +141,19 @@ export class AuthController {
   async resetPassword(@Body() resetPasswordInput: ResetPasswordInput) {
     await this.authService.resetPassword(resetPasswordInput);
     return { message: 'Password has been reset successfully' };
+  }
+
+  @Post('verify-otp')
+  @ApiOperation({ summary: 'Verify OTP' })
+  @ApiCreatedResponse({
+    description: 'OTP verified successfully',
+  })
+  @ApiBadRequestResponse({
+    description: 'Invalid OTP',
+  })
+  async verifyOtp(@Body() verifyOtpInput: VerifyOtpInput) {
+    const { email, token, authTokenType } = verifyOtpInput;
+    await this.authService.verifyOtp(email, token, authTokenType);
+    return { message: 'OTP verified successfully' };
   }
 }
