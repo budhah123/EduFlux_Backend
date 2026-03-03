@@ -63,7 +63,7 @@ export class UserEntity extends CommonAttribute {
     example: UserType.USER,
   })
   @Column('varchar', { name: 'userType', default: UserType.USER })
-  userType: UserType;
+  userType?: UserType;
 
   @BeforeInsert()
   async hashedPassword() {
