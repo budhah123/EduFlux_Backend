@@ -6,3 +6,4 @@ export * from './login.output';
 export * from './reset-password.input';
 export * from './update-password.input';
 export * from './check-user.input';
+export * from './verify-otp.input';

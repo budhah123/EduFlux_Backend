@@ -9,7 +9,7 @@ export class AuthTokenEntity {
     example: '64b8f0f2e1d3c2a5f6b7c8d9',
   })
   @ObjectIdColumn()
-  id: ObjectId;
+  _id: ObjectId;
 
   @ApiProperty({
     description: 'The ID of the user associated with the auth token',
