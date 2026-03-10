@@ -6,7 +6,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { UserType } from 'src/user/enum';
 
-export class AdminAccessTokenGuard extends AuthGuard('jwt') {
+export class AdminAccessTokenGuard extends AuthGuard('access-token-jwt') {
   canActivate(context: ExecutionContext) {
     return super.canActivate(context);
   }
