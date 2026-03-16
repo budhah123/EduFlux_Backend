@@ -1,5 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import * as dotenv from 'dotenv';
+dotenv.config();
+import * as crypto from 'crypto';
+(global as any).crypto = crypto;
 // import * as graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.js';
 import { ValidationPipe } from '@nestjs/common';
 import compression from 'compression';
@@ -7,8 +11,6 @@ import { SwaggerService } from '@app/swagger';
 import express from 'express';
 import { join } from 'path';
 import basicAuth from 'express-basic-auth';
-import * as dotenv from 'dotenv';
-dotenv.config();
 
 async function bootstrap() {
   const port = process.env.APP_PORT || 8080;
@@ -29,7 +31,7 @@ async function bootstrap() {
       users: { budhah: 'Budhah@456' }, // TODO: Change to env variables
     }),
   );
-  
+
   // Setup Swagger
   SwaggerService.setup(app);
 
