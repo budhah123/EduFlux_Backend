@@ -7,6 +7,8 @@ import { SwaggerService } from '@app/swagger';
 import express from 'express';
 import { join } from 'path';
 import basicAuth from 'express-basic-auth';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 async function bootstrap() {
   const port = process.env.APP_PORT || 8080;
